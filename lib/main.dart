@@ -14,6 +14,6 @@ class MyApp extends StatelessWidget {
             appBar: AppBar(
                 backgroundColor: Colors.blueGrey,
                 title: const Text("PFT Scav Hunt")),
-            body: Container(child: const Text("Hello PFT I am text."))));
+            body: Container(child: const Text("Hello PFT I am text!"))));
   }
 }
