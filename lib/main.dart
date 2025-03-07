@@ -8,7 +8,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Complex Pages Example',
+      title: 'Scavanger Hunt!',
       home: HomeScreen(),
     );
   }
@@ -24,10 +24,9 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   int _selectedIndex = 0;
 
-  // List of pages to display
   static final List<Widget> _pages = <Widget>[
+    HuntPage(),
     MapPage(),
-    SearchPage(),
     HelpPage(),
   ];
 
@@ -41,8 +40,8 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Get To Know PFT!'),
-        backgroundColor: Colors.blueGrey,
+        title: Text('Virtual PFT Tour'),
+        backgroundColor: Colors.purple[400],
         centerTitle: true,
       ),
       body: _pages.elementAt(_selectedIndex),
@@ -73,53 +72,137 @@ class MapPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // More complex layout using multiple widgets
-    return SingleChildScrollView(
-      child: Center(
-        child: Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Icon(Icons.map_outlined, size: 80),
-              SizedBox(height: 20),
-              Text('Map of PFT', style: TextStyle(fontSize: 24)),
-              // Add additional widgets or complex layouts here
-            ],
-          ),
+    return Center(
+      child: Padding(
+        padding: const EdgeInsets.all(12.0),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text('Map of PFT', style: TextStyle(fontSize: 24)),
+            Text('First Floor',
+                style: TextStyle(fontSize: 32, fontWeight: FontWeight.bold)),
+            Image.asset('assets/PFT_First_Floor.jpg'),
+            Text('Second Floor',
+                style: TextStyle(fontSize: 32, fontWeight: FontWeight.bold)),
+            Image.asset('assets/PFT_Second_Floor.jpg'),
+          ],
         ),
       ),
     );
   }
 }
 
-class SearchPage extends StatelessWidget {
-  const SearchPage({super.key});
+class Question {
+  final String funFact;
+  final String questionText;
+  final String answer;
+
+  Question({
+    required this.funFact,
+    required this.questionText,
+    required this.answer,
+  });
+}
+
+class HuntPage extends StatefulWidget {
+  const HuntPage({super.key});
+
+  @override
+  _HuntPageState createState() => _HuntPageState();
+}
+
+class _HuntPageState extends State<HuntPage> {
+  int currentQuestionIndex = 0;
+  final TextEditingController _answerController = TextEditingController();
+  String feedback = "";
+
+  final List<Question> questions = [
+    Question(
+      funFact: "Test Question 1",
+      questionText: "Write 'blue' ?",
+      answer: "blue",
+    ),
+    Question(
+      funFact: "Test Question 2",
+      questionText: "Write 'yellow'",
+      answer: "yellow",
+    ),
+  ];
+
+  void checkAnswer() {
+    String userAnswer = _answerController.text.trim().toLowerCase();
+    String correctAnswer = questions[currentQuestionIndex].answer.toLowerCase();
+
+    if (userAnswer == correctAnswer) {
+      setState(() {
+        feedback = "Correct!";
+
+        if (currentQuestionIndex < questions.length - 1) {
+          currentQuestionIndex++;
+          _answerController.clear();
+        } else {
+          feedback = "Congratulations! You completed the scavenger hunt.";
+        }
+      });
+    } else {
+      setState(() {
+        feedback = "Incorrect, try again.";
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
-    // Complex layout for search functionality
+    bool isCompleted = currentQuestionIndex >= questions.length;
+
     return Padding(
       padding: const EdgeInsets.all(16.0),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Text('Search Page', style: TextStyle(fontSize: 24)),
-          SizedBox(height: 20),
-          TextField(
-            decoration: InputDecoration(
-              border: OutlineInputBorder(),
-              labelText: 'Search',
-            ),
-          ),
-          SizedBox(height: 20),
-          ElevatedButton(
-            onPressed: () {
-              // Trigger search action
-            },
-            child: Text('Search'),
-          ),
-        ],
+      child: Center(
+        child: isCompleted
+            ? Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text("You've completed the scavenger hunt!",
+                      style: TextStyle(fontSize: 24)),
+                ],
+              )
+            : Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text("Question ${currentQuestionIndex + 1}",
+                      style: TextStyle(fontSize: 24)),
+                  SizedBox(height: 20),
+                  Text(questions[currentQuestionIndex].funFact,
+                      style: TextStyle(fontSize: 18)),
+                  SizedBox(height: 20),
+                  Text(questions[currentQuestionIndex].questionText,
+                      style:
+                          TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+                  SizedBox(height: 20),
+                  TextField(
+                    controller: _answerController,
+                    decoration: InputDecoration(
+                      border: OutlineInputBorder(),
+                      labelText: 'Your Answer',
+                    ),
+                  ),
+                  SizedBox(height: 20),
+                  ElevatedButton(
+                    onPressed: checkAnswer,
+                    child: Text('Submit'),
+                  ),
+                  SizedBox(height: 20),
+                  Text(
+                    feedback,
+                    style: TextStyle(
+                        fontSize: 18,
+                        color: feedback == "Correct!" ||
+                                feedback.contains("Congratulations")
+                            ? Colors.green
+                            : Colors.red),
+                  ),
+                ],
+              ),
       ),
     );
   }
@@ -130,7 +213,6 @@ class HelpPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // More detailed layout for a profile page
     return Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
