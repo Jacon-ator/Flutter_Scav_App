@@ -290,7 +290,7 @@ class HelpPage extends StatelessWidget {
           SizedBox(height: 4),
           Text.rich(
             TextSpan(
-              text: 'Contact me at:',
+              text: 'ontact me at:',
               style: TextStyle(fontSize: 18),
               children: <TextSpan>[
                 TextSpan(
