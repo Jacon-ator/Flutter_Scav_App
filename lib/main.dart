@@ -229,17 +229,22 @@ class _HomeScreenState extends State<HomeScreen> {
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: _selectedIndex,
         onTap: _onItemTapped,
-        items: const [
+        iconSize: 40, // Base size for icons
+        selectedIconTheme:
+            const IconThemeData(size: 50), // Size for selected icon
+        unselectedIconTheme:
+            const IconThemeData(size: 40), // Size for unselected icons
+        items: [
           BottomNavigationBarItem(
-            icon: Icon(Icons.map_outlined),
+            icon: ImageIcon(AssetImage('assets/Map_Icon.png')),
             label: 'Map',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.egg),
-            label: 'Scavanger Hunt',
+            icon: ImageIcon(AssetImage('assets/Question_Icon.png')),
+            label: 'Question',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.help_outline_sharp),
+            icon: ImageIcon(AssetImage('assets/Help_Icon.png')),
             label: 'Help',
           ),
         ],

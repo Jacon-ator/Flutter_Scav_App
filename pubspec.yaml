@@ -69,6 +69,9 @@ flutter:
   - assets/LSU_Logo.png
   - assets/PFT_First_Floor.jpg
   - assets/PFT_Second_Floor.jpg
+  - assets/Help_Icon.png
+  - assets/Map_Icon.png
+  - assets/Question_Icon.png
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images
