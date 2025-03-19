@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 
 void main() => runApp(MyApp());
@@ -9,19 +10,120 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Scavanger Hunt!',
-      home: HomeScreen(),
+      theme: ThemeData(fontFamily: 'Proxima Nova'),
+      home: SplashScreen(),
     );
   }
 }
 
+class SplashScreen extends StatefulWidget {
+  const SplashScreen({super.key});
+
+  @override
+  _SplashScreenState createState() => _SplashScreenState();
+}
+
+class _SplashScreenState extends State<SplashScreen> {
+  @override
+  void initState() {
+    super.initState();
+    Timer(const Duration(seconds: 3), () {
+      Navigator.of(context).pushReplacement(
+        MaterialPageRoute(builder: (_) => const UserIdSplashScreen()),
+      );
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: const Color(0xFF461D7C),
+      body: Center(
+        child: Image.asset(
+          'assets/LSU_Logo.png',
+          width: 200,
+        ),
+      ),
+    );
+  }
+}
+
+class UserIdSplashScreen extends StatefulWidget {
+  const UserIdSplashScreen({super.key});
+
+  @override
+  _UserIdSplashScreenState createState() => _UserIdSplashScreenState();
+}
+
+class _UserIdSplashScreenState extends State<UserIdSplashScreen> {
+  final TextEditingController _userIdController = TextEditingController();
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: const Color(0xFF461D7C),
+      body: Center(
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              const Text(
+                'Enter User ID',
+                style: TextStyle(
+                  fontSize: 24,
+                  color: Colors.white,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              const SizedBox(height: 20),
+              TextField(
+                controller: _userIdController,
+                style: const TextStyle(color: Colors.white),
+                decoration: InputDecoration(
+                  enabledBorder: OutlineInputBorder(
+                    borderSide: const BorderSide(color: Colors.white),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderSide: const BorderSide(color: Colors.white),
+                  ),
+                  labelText: 'User ID',
+                  labelStyle: const TextStyle(color: Colors.white),
+                ),
+              ),
+              const SizedBox(height: 20),
+              ElevatedButton(
+                onPressed: () {
+                  Navigator.of(context).pushReplacement(
+                    MaterialPageRoute(
+                      builder: (_) => HomeScreen(
+                          userId: _userIdController.text.isNotEmpty
+                              ? _userIdController.text
+                              : "DefaultUserId"),
+                    ),
+                  );
+                },
+                child: const Text('Continue'),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+// --- Modify HomeScreen to accept a userId ---
 class HomeScreen extends StatefulWidget {
-  const HomeScreen({super.key});
+  final String userId;
+  const HomeScreen({super.key, required this.userId});
 
   @override
   _HomeScreenState createState() => _HomeScreenState();
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   int _selectedIndex = 0;
 
   static final List<Widget> _pages = <Widget>[
@@ -29,6 +131,20 @@ class _HomeScreenState extends State<HomeScreen> {
     HuntPage(),
     HelpPage(),
   ];
+
+  // Returns a non-null title based on the selected index.
+  String _getTitle() {
+    switch (_selectedIndex) {
+      case 0:
+        return "Map";
+      case 1:
+        return "Question";
+      case 2:
+        return "Help";
+      default:
+        return ""; // Always returns a non-null String
+    }
+  }
 
   void _onItemTapped(int index) {
     setState(() {
@@ -39,10 +155,75 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      key: _scaffoldKey,
       appBar: AppBar(
-        title: Text('Virtual PFT Tour'),
-        backgroundColor: Colors.purple[400],
+        title: Text(
+          _getTitle(),
+          style: const TextStyle(
+            fontSize: 20,
+            fontWeight: FontWeight.bold,
+            color: Colors.white,
+          ),
+        ),
+        backgroundColor: const Color(0xFF461D7C),
         centerTitle: true,
+        actions: [
+          IconButton(
+            icon: const Icon(
+              Icons.person,
+              color: Colors.white,
+            ),
+            onPressed: () {
+              _scaffoldKey.currentState?.openEndDrawer();
+            },
+          ),
+        ],
+      ),
+      endDrawer: Drawer(
+        child: ListView(
+          padding: EdgeInsets.zero,
+          children: [
+            // Drawer header with the userid
+            UserAccountsDrawerHeader(
+              decoration: const BoxDecoration(
+                color: Color(0xFF461D7C),
+              ),
+              accountName:
+                  const Text('User ID:', style: const TextStyle(fontSize: 20)),
+              accountEmail:
+                  Text(widget.userId, style: const TextStyle(fontSize: 18)),
+              currentAccountPicture: const CircleAvatar(
+                backgroundColor: Colors.white,
+                child: Icon(
+                  Icons.person,
+                  size: 40,
+                  color: Color(0xFF461D7C),
+                ),
+              ),
+            ),
+            ListTile(
+              leading: const Icon(Icons.settings),
+              title: const Text('Account Settings'),
+              onTap: () {
+                // Handle account settings tap
+              },
+            ),
+            ListTile(
+              leading: const Icon(Icons.notifications),
+              title: const Text('Notification Preferences'),
+              onTap: () {
+                // Handle notification preferences tap
+              },
+            ),
+            ListTile(
+              leading: const Icon(Icons.lock),
+              title: const Text('Privacy'),
+              onTap: () {
+                // Handle privacy tap
+              },
+            ),
+          ],
+        ),
       ),
       body: _pages.elementAt(_selectedIndex),
       bottomNavigationBar: BottomNavigationBar(

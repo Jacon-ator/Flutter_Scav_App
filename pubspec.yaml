@@ -57,8 +57,16 @@ flutter:
   # the material Icons class.
   uses-material-design: true
 
+  fonts:
+    - family: Proxima Nova
+      fonts:
+        - asset: assets/fonts/ProximaNovaBold.otf
+        - asset: assets/fonts/ProximaNovaRegular.otf
+          weight: 700
+
   # To add assets to your application, add an assets section, like this:
   assets:
+  - assets/LSU_Logo.png
   - assets/PFT_First_Floor.jpg
   - assets/PFT_Second_Floor.jpg
 
